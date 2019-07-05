@@ -2,10 +2,10 @@ import sys
 import re
 from abc import ABCMeta
 import argparse
-from typing import List, Dict, Union, Optional
+from typing import List, Dict, Union, Optional, Type
 
-SUPPORTED_TYPES = [int, float, str, bool]
-SettingType = Union[int, float, str, bool]
+SUPPORTED_TYPES = [int, float, str, bool, type(None)]
+SettingType = Optional[Union[int, float, str, bool]]
 SETTING_NAME_REGEX = re.compile('[A-Z][A-Z0-9_]*')
 
 
@@ -23,21 +23,21 @@ class Setting:
         """
         self.default = default
         self.group_values = kwargs
+        self.type: Type[SettingType]
 
-        self.type = type(default)
+        if default is None:
+            if self.group_values:
+                self.type = _get_common_type(list(kwargs.values()))
+            else:
+                self.type = str  # default to string if everything else fails
+        else:
+            self.type = type(default)
+
         if self.type not in SUPPORTED_TYPES:
             raise ValueError(
                 '{type} is not a supported type, only '
                 '{supported_types} are supported.'.format(
                     type=self.type, supported_types=SUPPORTED_TYPES
-                )
-            )
-
-        # pylint: disable=unidiomatic-typecheck
-        if not all([type(v) == self.type for v in self.group_values.values()]):
-            raise ValueError(
-                'Not all values are of {type} type: {values}'.format(
-                    type=self.type, values=self.group_values.values()
                 )
             )
 
@@ -192,3 +192,13 @@ def _config_name_to_arg_name(name):
 
 def _config_name_to_option(name):
     return '--' + name.lower().replace('_', '-')
+
+
+def _get_common_type(values: List[SettingType]) -> Type[SettingType]:
+    first_type = type(values[0])
+    other_types = [type(v) for v in values[1:]]
+    if all([first_type == t for t in other_types]):  # type: ignore
+        return first_type
+    raise ValueError(
+        'Not all values have the same type: {values}'.format(values=values)
+    )

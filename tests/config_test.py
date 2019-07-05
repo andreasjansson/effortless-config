@@ -24,7 +24,7 @@ def test_bad_type():
             MY_LIST = setting([1, 2, 3])
 
 
-def test_good_group_types():
+def test_group_types():
     class config(Config):
         groups = ['foo', 'bar']
 
@@ -39,14 +39,21 @@ def test_good_group_types():
     assert config.MY_BOOL is True
 
 
-def test_bad_group_types():
+def test_none():
+    class config(Config):
+        FOO = setting(None)
 
-    with pytest.raises(ValueError):
+    assert config.FOO is None
+    assert config._settings['FOO'].type == str
 
-        class config(Config):
-            groups = ['foo', 'bar']
 
-            MY_INT = setting(10, foo='asdf')
+def test_none_with_groups():
+    class config(Config):
+        groups = ['hello']
+        FOO = setting(None, hello=123)
+
+    assert config.FOO is None
+    assert config._settings['FOO'].type == int
 
 
 def test_undefined_groups():

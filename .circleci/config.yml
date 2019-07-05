@@ -39,7 +39,7 @@ jobs:
           name: run tests and code style on 3.7
           command: |
             sudo pip install tox
-            tox -e py37,black,pylint
+            tox -e py37,black,pylint,mypy
   deploy:
     docker:
       - image: circleci/python:3.7
