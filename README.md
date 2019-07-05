@@ -53,13 +53,14 @@ def setting(default: SettingType, **kwargs: SettingType):
     """
 ```
 
-In this example, `FLOAT_SETTING` has no groups defined, so this setting will use the default value for all groups. It can still be overridden on the command line though. But `SOME_OTHER_INTEGER` will always be fixed, since it's not wrapped in `setting`.
+(...where `SettingType` is `Union[int, float, str, bool]`.)
 
-Where `SettingType` is `Union[int, float, str, bool]`.
+
+In this example, `FLOAT_SETTING` has no groups defined, so this setting will use the default value for all groups. It can still be overridden on the command line though. But `SOME_OTHER_INTEGER` will always be fixed, since it's not wrapped in `setting`.
 
 ### Using the configuration
 
-Then in your code you can use these settings, for example in`'example/main.py`:
+Then in your code you can use these settings, for example in`example/main.py`:
 
 ```python
 from .config import config
@@ -75,7 +76,7 @@ if __name__ == '__main__':
 
 When we invoke main.py without any arguments, we get the default settings:
 
-```
+```console
 $ python -m example.main
 SOME_INTEGER_SETTING is 10
 FLOAT_SETTING is 0.5
@@ -86,7 +87,7 @@ SOME_OTHER_INTEGER is 100
 
 When we pass an configuration group using the `--configuration` parameter, we get different values:
 
-```
+```console
 $ python -m example.main --configuration experiment1
 SOME_INTEGER_SETTING is 20
 FLOAT_SETTING is 0.5
@@ -97,7 +98,7 @@ SOME_OTHER_INTEGER is 100
 
 We can also override individual settings:
 
-```
+```console
 $ python -m example.main --some-integer-setting 40 --float-setting -5
 SOME_INTEGER_SETTING is 40
 FLOAT_SETTING is -5.0
@@ -108,7 +109,7 @@ SOME_OTHER_INTEGER is 100
 
 As well as combining groups with individual settings:
 
-```
+```console
 $ python -m example.main --configuration experiment1 --some-integer-setting 40
 SOME_INTEGER_SETTING is 40
 FLOAT_SETTING is 0.5
@@ -119,7 +120,7 @@ SOME_OTHER_INTEGER is 100
 
 You can see all available settings using the `-h` flag:
 
-```
+```console
 $ python -m example.main -h
 usage: main.py [-h] [--configuration {experiment1,experiment2}]
                [--some-integer-setting SOME_INTEGER_SETTING]
