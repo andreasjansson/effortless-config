@@ -1,0 +1,57 @@
+# -*- mode: yaml -*-
+
+version: 2.1
+workflows:
+  build_and_deploy:
+    jobs:
+      - build-py36:
+          filters:
+            branches:
+              only: /.*/
+      - build-py37:
+          filters:
+            branches:
+              only: /.*/
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
+jobs:
+  build-py37:
+    docker:
+      - image: circleci/python:3.6
+    steps:
+      - checkout
+      - run:
+          name: run tests on 3.6
+          command: tox -e py36
+  build-py36:
+    docker:
+      - image: circleci/python:3.7
+    steps:
+      - checkout
+      - run:
+          name: run tests and code style on 3.7
+          command: tox -e py37,black,pylint
+  deploy:
+    docker:
+      - image: circleci/python:3.7
+    steps:
+      - checkout
+      - run:
+          name: init .pypirc
+          command: |
+            echo -e "[pypi]" >> ~/.pypirc
+            echo -e "username = $PYPI_USERNAME" >> ~/.pypirc
+            echo -e "password = $PYPI_PASSWORD" >> ~/.pypirc
+      - run:
+          name: create packages
+          command: |
+            python setup.py sdist bdist_wheel
+      - run:
+          name: upload to pypi
+          command: |
+            pip install twine
+            twine upload dist/*
