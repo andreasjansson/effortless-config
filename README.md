@@ -1,5 +1,7 @@
 # Effortless Config
 
+[![PyPI version](https://badge.fury.io/py/effortless-config.svg)](https://badge.fury.io/py/effortless-config) [![CircleCI](https://circleci.com/gh/andreasjansson/effortless-config/tree/master.svg?style=svg)](https://circleci.com/gh/andreasjansson/effortless-config/tree/master)
+
 _Globally scoped configuration with argparse integration._
 
 ## Installation
