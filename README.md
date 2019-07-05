@@ -21,7 +21,7 @@ pip install effortless-config
 
 Inside some file in your project, for example `example/config.py`:
 
-```
+```python
 from effortless_config import Config, setting
 
 class config(Config):  # notice lowercase c
@@ -37,7 +37,7 @@ class config(Config):  # notice lowercase c
 
 First we create a class that extends `effortless_config.Config`. Inside it we add configurable parameters with the `effortless_config.setting` method. `setting` has the signature:
 
-```
+```python
 def setting(default: SettingType, **kwargs: SettingType):
     """
     Create a new configurable parameter, inside a class that extends Config.
@@ -59,7 +59,7 @@ Where `SettingType` is `Union[int, float, str, bool]`.
 
 Then in your code you can use these settings, for example in`'example/main.py`:
 
-```
+```python
 from .config import config
 
 if __name__ == '__main__':
@@ -137,7 +137,7 @@ optional arguments:
 
 When writing tests, you can use the `config.override` context manager to override individual settings:
 
-```
+```python
 import pytest
 from .config import config
 
@@ -149,7 +149,7 @@ def test_with_context_manager():
 
 The `config.override` method can also be used without context management in conjunction with `config.reset_to_defaults`:
 
-```
+```python
 def test_with_manual_reset():
     config.override(FLOAT_SETTING=0.8, A_BOOLEAN=True)
     assert config.FLOAT_SETTING * config.SOME_INTEGER_SETTING == 8

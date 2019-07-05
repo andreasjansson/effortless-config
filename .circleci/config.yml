@@ -14,7 +14,8 @@ workflows:
               only: /.*/
       - deploy:
           requires:
-            - build
+            - build-py36
+            - build-py37
           filters:
             branches:
               only: master
