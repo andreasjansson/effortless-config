@@ -162,7 +162,7 @@ class _OverrideContextManager:
         self.original_values: Dict[str, SettingType] = {}
 
         for key, value in overrides.items():
-            if key not in self.cls._settings:
+            if not hasattr(self.cls, key):
                 raise ValueError('Unknown config flag: {key}'.format(key=key))
 
             original_value = getattr(self.cls, key)
