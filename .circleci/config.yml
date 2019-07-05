@@ -27,7 +27,9 @@ jobs:
       - checkout
       - run:
           name: run tests on 3.6
-          command: tox -e py36
+          command: |
+            sudo pip install tox
+            tox -e py36
   build-py36:
     docker:
       - image: circleci/python:3.7
@@ -35,7 +37,9 @@ jobs:
       - checkout
       - run:
           name: run tests and code style on 3.7
-          command: tox -e py37,black,pylint
+          command: |
+            sudo pip install tox
+            tox -e py37,black,pylint
   deploy:
     docker:
       - image: circleci/python:3.7
@@ -54,5 +58,5 @@ jobs:
       - run:
           name: upload to pypi
           command: |
-            pip install twine
+            sudo pip install twine
             twine upload dist/*
