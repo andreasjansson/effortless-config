@@ -165,14 +165,6 @@ class _OverrideContextManager:
             if key not in self.cls._settings:
                 raise ValueError('Unknown config flag: {key}'.format(key=key))
 
-            expected_type = self.cls._settings[key].type
-            if not isinstance(value, expected_type):
-                raise ValueError(
-                    '{value} is not of type {expected_type}'.format(
-                        value=value, expected_type=expected_type
-                    )
-                )
-
             original_value = getattr(self.cls, key)
             self.original_values[key] = original_value
             setattr(self.cls, key, value)
