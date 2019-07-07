@@ -133,7 +133,13 @@ class Config(metaclass=ConfigMeta):
 
         parser = argparse.ArgumentParser(description=description)
 
-        parser.add_argument('--configuration', '-c', choices=cls.groups)
+        if cls.groups:
+            parser.add_argument(
+                '--configuration',
+                '-c',
+                choices=['default'] + cls.groups,
+                default='default',
+            )
 
         for name, setting in cls._settings.items():
             option = _config_name_to_option(name)
@@ -144,8 +150,11 @@ class Config(metaclass=ConfigMeta):
 
         args = parser.parse_args(argv)
 
-        if args.configuration:
-            cls.set_group(args.configuration)
+        if cls.groups:
+            if args.configuration == 'default':
+                cls.reset_to_defaults()
+            else:
+                cls.set_group(args.configuration)
 
         for name, setting in cls._settings.items():
             arg_name = _config_name_to_arg_name(name)

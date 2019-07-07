@@ -105,6 +105,20 @@ class test_set_group_from_args:
     assert config.S3 == 'b'
 
 
+class test_set_default_group_from_args:
+    class config(Config):
+        groups = ['foo', 'bar']
+
+        S1 = setting(10, foo=20)
+        S2 = setting(True, bar=False)
+        S3 = setting('a', foo='b', bar='c')
+
+    config.parse_args(['--configuration', 'default'])
+    assert config.S1 == 10
+    assert config.S2 is True
+    assert config.S3 == 'a'
+
+
 class test_set_option_from_args:
     class config(Config):
         groups = ['foo', 'bar']
