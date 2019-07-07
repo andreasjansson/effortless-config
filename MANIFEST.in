@@ -1,2 +1,3 @@
 include effortless_config/VERSION
 include effortless_config/py.typed
+include effortless_config/*.pyi

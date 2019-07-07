@@ -40,20 +40,10 @@ class config(Config):  # notice lowercase c
 First we create a class that extends `effortless_config.Config`. Inside it we add configurable parameters with the `effortless_config.setting` method. `setting` has the signature:
 
 ```python
-def setting(default: SettingType, **kwargs: SettingType):
-    """
-    Create a new configurable parameter, inside a class that extends Config.
-
-    Args:
-        default: Default parameter value.
-        **kwargs: Map of group name to group value.
-
-    Returns:
-        A new setting.
-    """
+def setting(default: T, **kwargs: T) -> T
 ```
 
-(...where `SettingType` is `Union[int, float, str, bool]`.)
+...where `T` is `Union[int, float, str, bool, NoneType]` and `kwargs` is a map from group names to values.
 
 
 In this example, `FLOAT_SETTING` has no groups defined, so this setting will use the default value for all groups. It can still be overridden on the command line though. But `SOME_OTHER_INTEGER` will always be fixed, since it's not wrapped in `setting`.
