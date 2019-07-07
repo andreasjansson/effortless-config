@@ -31,22 +31,19 @@ class config(Config):  # notice lowercase c
     groups = ['experiment1', 'experiment2']
 
     SOME_INTEGER_SETTING = setting(10, experiment1=20, experiment2=30)
-    FLOAT_SETTING = setting(0.5)
+    FLOAT_SETTING = 0.5
     A_BOOLEAN = setting(False, experiment1=True)
     MY_STRING_SETTING = setting('foo', experiment2='bar')
     SOME_OTHER_INTEGER = 100
 ```
 
-First we create a class that extends `effortless_config.Config`. Inside it we add configurable parameters with the `effortless_config.setting` method. `setting` has the signature:
+First we create a class that extends `effortless_config.Config`. Inside it we add configurable parameters, either simply by value, or by using the `effortless_config.setting` method. `setting` has the signature:
 
 ```python
 def setting(default: T, **kwargs: T) -> T
 ```
 
-...where `T` is `Union[int, float, str, bool, NoneType]` and `kwargs` is a map from group names to values.
-
-
-In this example, `FLOAT_SETTING` has no groups defined, so this setting will use the default value for all groups. It can still be overridden on the command line though. But `SOME_OTHER_INTEGER` will always be fixed, since it's not wrapped in `setting`.
+...where `T` is `Union[int, float, str, bool, NoneType]` and `kwargs` is a map from group names to values. Specifying parameters by value is shorthand for a `setting` with no groups, i.e. `SOME_KEY = 'value'` is equivalent to `SOME_KEY = setting('value')`.
 
 ### Using the configuration
 
@@ -116,6 +113,7 @@ usage: main.py [-h] [--configuration {experiment1,experiment2}]
                [--some-integer-setting SOME_INTEGER_SETTING]
                [--float-setting FLOAT_SETTING] [--a-boolean {true,false}]
                [--my-string-setting MY_STRING_SETTING]
+               [--some-other-integer SOME_OTHER_INTEGER]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -124,6 +122,7 @@ optional arguments:
   --float-setting FLOAT_SETTING
   --a-boolean {true,false}
   --my-string-setting MY_STRING_SETTING
+  --some-other-integer SOME_OTHER_INTEGER
 ```
 
 ## Testing

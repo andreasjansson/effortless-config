@@ -6,7 +6,7 @@ from typing import List, Dict, Union, Optional, Type
 
 SUPPORTED_TYPES = [int, float, str, bool, type(None)]
 SettingType = Optional[Union[int, float, str, bool]]
-SETTING_NAME_REGEX = re.compile('[A-Z][A-Z0-9_]*')
+SETTING_FORMAT = '[a-zA-Z][a-zA-Z0-9_]*'
 
 
 class Setting:
@@ -43,18 +43,23 @@ class Setting:
 
 
 class ConfigMeta(ABCMeta):
-
-    _settings: Dict[str, Setting] = {}
-
     def __new__(mcs, name, bases, namespace, **kwargs):
+        classcell = namespace.pop('__classcell__', None)
         new_namespace = {}
 
         groups = namespace.get('groups', [])
+        new_namespace['groups'] = groups
+
+        settings = namespace.get('settings', {})
+        new_namespace['_settings'] = settings
 
         for key, value in namespace.items():
-            if isinstance(value, Setting):
-                if not SETTING_NAME_REGEX.match(key):
-                    raise ValueError('Settings must be in the format [A-Z][A-Z0-9_]*')
+            if key == 'groups':
+                continue
+
+            elif isinstance(value, Setting):
+                if not re.match(SETTING_FORMAT, key):
+                    raise ValueError(f'Settings must be in the format {SETTING_FORMAT}')
 
                 undefined_groups = set(value.group_values.keys()) - set(groups)
                 if undefined_groups:
@@ -65,10 +70,23 @@ class ConfigMeta(ABCMeta):
                         )
                     )
 
-                mcs._settings[key] = value
+                settings[key] = value
                 new_namespace[key] = value.default
+
+            elif (
+                not callable(value)
+                and not key.startswith('_')
+                and key not in settings
+                and not isinstance(value, classmethod)
+            ):
+                settings[key] = Setting(default=value)
+                new_namespace[key] = value
+
             else:
                 new_namespace[key] = value
+
+        if classcell is not None:
+            new_namespace['__classcell__'] = classcell
 
         return super().__new__(mcs, name, bases, new_namespace, **kwargs)
 
@@ -76,6 +94,7 @@ class ConfigMeta(ABCMeta):
 class Config(metaclass=ConfigMeta):
 
     groups: List[str]
+    _settings: Dict[str, Setting]
 
     def __init__(self):
         """
