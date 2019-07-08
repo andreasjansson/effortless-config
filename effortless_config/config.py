@@ -110,6 +110,9 @@ class Config(metaclass=ConfigMeta):
         Args:
             group_name: The name of the group.
         """
+        if group_name not in cls.groups:
+            raise ValueError(f'Unknown group: {group_name}')
+
         for name, setting in cls._settings.items():
             if group_name in setting.group_values:
                 setattr(cls, name, setting.group_values[group_name])

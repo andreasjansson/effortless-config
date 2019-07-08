@@ -91,6 +91,19 @@ class test_set_group:
     assert config.S4 == 0.5
 
 
+class test_set_bad_group:
+    class config(Config):
+        groups = ['foo', 'bar']
+
+        S1 = setting(10, foo=20)
+        S2 = setting(True, bar=False)
+        S3 = setting('a', foo='b', bar='c')
+        S4 = 0.5
+
+    with pytest.raises(ValueError):
+        config.set_group('baz')
+
+
 class test_set_group_from_args:
     class config(Config):
         groups = ['foo', 'bar']
