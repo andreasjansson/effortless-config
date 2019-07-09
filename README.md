@@ -207,3 +207,7 @@ def test_with_manual_reset():
     assert config.A_BOOLEAN is True
     config.reset_to_defaults()
 ```
+
+---
+
+Btw, this has nothing to do with Chef's Effortless Config project, I forgot to google the name before I put it on pypi and now I guess I'm stuck with it.
