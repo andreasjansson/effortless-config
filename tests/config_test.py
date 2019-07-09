@@ -60,12 +60,14 @@ def test_none_with_groups():
 
 def test_badly_cased_shorthand():
     with pytest.raises(ValueError):
+
         class config(Config):
             adsf = 123
 
 
 def test_badly_cased_setting():
     with pytest.raises(ValueError):
+
         class config(Config):
             adsf = setting(123)
 
@@ -201,10 +203,49 @@ def test_repr():
         C = True
         D = 'foo'
 
-    assert repr(c) == """\
+    assert (
+        repr(c)
+        == """\
 class c(Config):
     groups = ['a']
     A = 1
     B = 2.0
     C = True
     D = 'foo'"""
+    )
+
+
+def test_equal():
+    class c(Config):
+        groups = ['a']
+        A = setting(1, a=2)
+        B = 2.0
+        C = True
+        D = 'foo'
+
+    class d(Config):
+        B = 2.0
+        A = 1
+        D = 'foo'
+        C = True
+
+    assert c == d
+
+
+def test_to_hash_string():
+    class c(Config):
+        groups = ['a']
+        A = setting(1, a=2)
+        B = 2.0
+        C = True
+        D = 'foo'
+
+    class d(Config):
+        B = 2.0
+        A = 1
+        D = 'foo'
+        C = True
+
+    assert c.to_hash_string() == d.to_hash_string()
+    assert isinstance(c.to_hash_string(), str)
+    assert len(c.to_hash_string()) > 3  # a reasonable assumption

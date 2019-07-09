@@ -4,6 +4,9 @@ from abc import ABCMeta
 import argparse
 from typing import List, Dict, Union, Optional, Type
 
+from effortless_config import base62
+
+
 SUPPORTED_TYPES = [int, float, str, bool, type(None)]
 SettingType = Optional[Union[int, float, str, bool]]
 SETTING_FORMAT = '[A-Z][A-Z0-9_]*'
@@ -89,6 +92,9 @@ class ConfigMeta(ABCMeta):
 
         return super().__new__(mcs, name, bases, new_namespace, **kwargs)
 
+    def to_hash_string(cls):
+        return base62.encode(hash(cls))
+
     def __str__(cls):
         return repr(cls)
 
@@ -100,6 +106,13 @@ class ConfigMeta(ABCMeta):
             lines += [f'    {key} = {repr(getattr(cls, key))}']
 
         return '\n'.join(lines)
+
+    def __hash__(cls):
+        values = tuple([getattr(cls, key) for key in sorted(cls._settings)])
+        return hash(values)
+
+    def __eq__(cls, other):
+        return isinstance(other, ConfigMeta) and hash(other) == hash(cls)
 
 
 class Config(metaclass=ConfigMeta):
