@@ -103,7 +103,7 @@ class test_set_group:
     assert config.S4 == 0.5
 
 
-class test_set_bad_group:
+def test_set_bad_group():
     class config(Config):
         groups = ['foo', 'bar']
 
@@ -116,7 +116,7 @@ class test_set_bad_group:
         config.set_group('baz')
 
 
-class test_set_group_from_args:
+def test_set_group_from_args():
     class config(Config):
         groups = ['foo', 'bar']
 
@@ -130,7 +130,7 @@ class test_set_group_from_args:
     assert config.S3 == 'b'
 
 
-class test_set_default_group_from_args:
+def test_set_default_group_from_args():
     class config(Config):
         groups = ['foo', 'bar']
 
@@ -144,7 +144,7 @@ class test_set_default_group_from_args:
     assert config.S3 == 'a'
 
 
-class test_set_option_from_args:
+def test_set_option_from_args():
     class config(Config):
         groups = ['foo', 'bar']
 
@@ -158,7 +158,7 @@ class test_set_option_from_args:
     assert config.S3 == 'a'
 
 
-class test_set_shorthand_option_from_args:
+def test_set_shorthand_option_from_args():
     class config(Config):
         S1 = 10
         S2 = True
@@ -168,7 +168,7 @@ class test_set_shorthand_option_from_args:
     assert config.S2 is False
 
 
-class test_set_group_and_option_from_args:
+def test_set_group_and_option_from_args():
     class config(Config):
         groups = ['foo', 'bar']
 
@@ -184,10 +184,27 @@ class test_set_group_and_option_from_args:
     assert config.S4 == 1.5
 
 
-class test_set_bad_type_from_args:
+def test_set_bad_type_from_args():
     class config(Config):
         S1 = 10
         S2 = True
 
     with pytest.raises(SystemExit):
         config.parse_args(['--s1', 'foo'])
+
+
+def test_repr():
+    class c(Config):
+        groups = ['a']
+        A = setting(1, a=2)
+        B = 2.0
+        C = True
+        D = 'foo'
+
+    assert repr(c) == """\
+class c(Config):
+    groups = ['a']
+    A = 1
+    B = 2.0
+    C = True
+    D = 'foo'"""

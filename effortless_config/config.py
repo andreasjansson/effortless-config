@@ -89,6 +89,18 @@ class ConfigMeta(ABCMeta):
 
         return super().__new__(mcs, name, bases, new_namespace, **kwargs)
 
+    def __str__(cls):
+        return repr(cls)
+
+    def __repr__(cls):
+        lines = [f'class {cls.__name__}(Config):']
+        if cls.groups:
+            lines += [f'    groups = {repr(cls.groups)}']
+        for key in cls._settings:
+            lines += [f'    {key} = {repr(getattr(cls, key))}']
+
+        return '\n'.join(lines)
+
 
 class Config(metaclass=ConfigMeta):
 
