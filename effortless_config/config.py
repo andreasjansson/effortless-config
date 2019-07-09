@@ -6,7 +6,7 @@ from typing import List, Dict, Union, Optional, Type
 
 SUPPORTED_TYPES = [int, float, str, bool, type(None)]
 SettingType = Optional[Union[int, float, str, bool]]
-SETTING_FORMAT = '[a-zA-Z][a-zA-Z0-9_]*'
+SETTING_FORMAT = '[A-Z][A-Z0-9_]*'
 
 
 class Setting:
@@ -58,9 +58,7 @@ class ConfigMeta(ABCMeta):
                 continue
 
             elif isinstance(value, Setting):
-                if not re.match(SETTING_FORMAT, key):
-                    raise ValueError(f'Settings must be in the format {SETTING_FORMAT}')
-
+                _validate_setting_key(key)
                 undefined_groups = set(value.group_values.keys()) - set(groups)
                 if undefined_groups:
                     raise ValueError(
@@ -79,6 +77,7 @@ class ConfigMeta(ABCMeta):
                 and key not in settings
                 and not isinstance(value, classmethod)
             ):
+                _validate_setting_key(key)
                 settings[key] = Setting(default=value)
                 new_namespace[key] = value
 
@@ -225,3 +224,8 @@ def _get_common_type(values: List[SettingType]) -> Type[SettingType]:
     raise ValueError(
         'Not all values have the same type: {values}'.format(values=values)
     )
+
+
+def _validate_setting_key(key: str):
+    if not re.match(SETTING_FORMAT, key):
+        raise ValueError(f'Settings must be in the format {SETTING_FORMAT}')

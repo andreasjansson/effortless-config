@@ -58,6 +58,18 @@ def test_none_with_groups():
     assert config._settings['FOO'].type == int
 
 
+def test_badly_cased_shorthand():
+    with pytest.raises(ValueError):
+        class config(Config):
+            adsf = 123
+
+
+def test_badly_cased_setting():
+    with pytest.raises(ValueError):
+        class config(Config):
+            adsf = setting(123)
+
+
 def test_undefined_groups():
     with pytest.raises(ValueError):
 
