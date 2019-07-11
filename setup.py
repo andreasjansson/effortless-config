@@ -20,5 +20,5 @@ setup(
     install_requires=[],
     python_requires='>=3.6',
     long_description=long_description,
-    long_description_content_type='text/markdown'
+    long_description_content_type='text/markdown',
 )
