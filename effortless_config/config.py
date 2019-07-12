@@ -53,7 +53,7 @@ class ConfigMeta(ABCMeta):
         groups = namespace.get('groups', [])
         new_namespace['groups'] = groups
 
-        settings = namespace.get('settings', {})
+        settings = namespace.get('_settings', {})
         new_namespace['_settings'] = settings
 
         for key, value in namespace.items():
@@ -93,7 +93,7 @@ class ConfigMeta(ABCMeta):
         return super().__new__(mcs, name, bases, new_namespace, **kwargs)
 
     def to_hash_string(cls):
-        return base62.encode(hash(cls))
+        return base62.encode(abs(hash(cls)))
 
     def __str__(cls):
         return repr(cls)

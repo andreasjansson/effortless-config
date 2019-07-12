@@ -41,6 +41,27 @@ def test_group_types():
     assert config.MY_BOOL is True
 
 
+def test_method():
+    class config(Config):
+        groups = ['foo', 'bar']
+
+        MY_INT = setting(10, foo=10, bar=20)
+        MY_FLOAT = setting(10.0, bar=20.0)
+        MY_STR = setting('foo', foo='asdf')
+
+        @classmethod
+        def MY_BOOL(cls):
+            return True
+
+    assert config.MY_INT == 10
+    assert config.MY_FLOAT == 10.0
+    assert config.MY_STR == 'foo'
+    assert config.MY_BOOL() is True
+
+    assert 'MY_INT' in config._settings
+    assert 'MY_BOOL' not in config._settings
+
+
 def test_none():
     class config(Config):
         FOO = setting(None)

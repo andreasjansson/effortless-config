@@ -14,7 +14,7 @@ def encode(num, alphabet=BASE62):
         return alphabet[0]
     arr = []
     base = len(alphabet)
-    while num:
+    while num > 0:
         num, rem = divmod(num, base)
         arr.append(alphabet[rem])
     arr.reverse()
