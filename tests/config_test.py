@@ -9,12 +9,16 @@ def test_types():
         MY_FLOAT = setting(10.0)
         MY_STR = setting('foo')
         MY_BOOL = setting(True)
+        MY_LIST = setting([1, 2, 3])
+        MY_DICT = setting({'a': 1, 'b': 2, 'c': 3})
         MY_SHORTHAND_INT = 20
 
     assert config.MY_INT == 10
     assert config.MY_FLOAT == 10.0
     assert config.MY_STR == 'foo'
     assert config.MY_BOOL is True
+    assert config.MY_LIST == [1, 2, 3]
+    assert config.MY_DICT == {'a': 1, 'b': 2, 'c': 3}
     assert config.MY_SHORTHAND_INT == 20
 
 
@@ -23,7 +27,7 @@ def test_bad_type():
     with pytest.raises(ValueError):
 
         class config(Config):
-            MY_LIST = setting([1, 2, 3])
+            MY_LIST = setting(1j)
 
 
 def test_group_types():
@@ -109,6 +113,8 @@ class test_set_group:
         S2 = setting(True, bar=False)
         S3 = setting('a', foo='b', bar='c')
         S4 = 0.5
+        S5 = setting([1, 2, 3], foo=[4, 5, 6])
+        S6 = setting({'a': 1, 'b': 2, 'c': 3}, bar={'d': 4, 'e': 5})
 
     assert config.S1 == 10
     assert config.S4 == 0.5
@@ -118,12 +124,16 @@ class test_set_group:
     assert config.S2 is True
     assert config.S3 == 'b'
     assert config.S4 == 0.5
+    assert config.S5 == [4, 5, 6]
+    assert config.S6 == {'a': 1, 'b': 2, 'c': 3}
 
     config.set_group('bar')
     assert config.S1 == 10
     assert config.S2 is False
     assert config.S3 == 'c'
     assert config.S4 == 0.5
+    assert config.S5 == [1, 2, 3]
+    assert config.S6 == {'d': 4, 'e': 5}
 
 
 def test_set_bad_group():
@@ -205,6 +215,38 @@ def test_set_group_and_option_from_args():
     assert config.S2 is True
     assert config.S3 == 'd'
     assert config.S4 == 1.5
+
+
+def test_set_list_from_args():
+    class config(Config):
+        S1 = [1, 2, 3]
+
+    config.parse_args(['--s1', '[4, 5, 6]'])
+    assert config.S1 == [4, 5, 6]
+
+
+def test_bad_set_list_from_args():
+    class config(Config):
+        S1 = [1, 2, 3]
+
+    with pytest.raises(SystemExit):
+        config.parse_args(['--s1', '4,5,6'])
+
+
+def test_set_dict_from_args():
+    class config(Config):
+        S1 = {'a': 1, 'b': 2}
+
+    config.parse_args(['--s1', '{"c": 3, "d": 4}'])
+    assert config.S1 == {'c': 3, 'd': 4}
+
+
+def test_bad_set_dict_from_args():
+    class config(Config):
+        S1 = {'a': 1, 'b': 2}
+
+    with pytest.raises(SystemExit):
+        config.parse_args(['--s1', '{a: 1}'])
 
 
 def test_set_bad_type_from_args():

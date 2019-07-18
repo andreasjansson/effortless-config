@@ -82,6 +82,12 @@ A_BOOLEAN is False
 MY_STRING_SETTING is foo
 ```
 
+List and dict type settings can be overridden by passing json strings from the command line, e.g.
+
+```console
+$ python lists_and_dicts.py --my-list='[1, 2, 3]' --my-dict='{"foo": 10, "bar": 20}'
+```
+
 ## Using _groups_
 
 Configuration _groups_ are families of settings that you want to tie together. For example, you might have some machine learning problem for which you have a large model and a small model, and you want to easily switch between the two models without having to specify all parameters on the command line every time.
@@ -107,7 +113,7 @@ class config(Config):
 def setting(default: T, **kwargs: T) -> T
 ```
 
-...where `T` is `Union[int, float, str, bool, NoneType]` and `kwargs` is a map from group names to values. Specifying parameters by value is shorthand for a `setting` with no groups, i.e. `SOME_KEY = 'value'` is equivalent to `SOME_KEY = setting(default='value')`.
+...where `T` is `Union[int, float, str, bool, list, dict, NoneType]` and `kwargs` is a map from group names to values. Specifying parameters by value is shorthand for a `setting` with no groups, i.e. `SOME_KEY = 'value'` is equivalent to `SOME_KEY = setting(default='value')`.
 
 When using groups you must first define the group names using the `config.groups` list.
 

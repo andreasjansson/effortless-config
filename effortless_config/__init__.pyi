@@ -2,7 +2,7 @@
 
 from typing import TypeVar, Union, Optional, List
 
-T = TypeVar('T', bound=Optional[Union[int, float, str, bool]])
+T = TypeVar('T', bound=Optional[Union[int, float, str, bool, list, dict]])
 
 def setting(default: T, **kwargs: T) -> T: ...
 

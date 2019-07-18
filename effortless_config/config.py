@@ -1,5 +1,6 @@
 import sys
 import re
+import json
 from abc import ABCMeta
 import argparse
 from typing import List, Dict, Union, Optional, Type
@@ -7,8 +8,8 @@ from typing import List, Dict, Union, Optional, Type
 from effortless_config import base62
 
 
-SUPPORTED_TYPES = [int, float, str, bool, type(None)]
-SettingType = Optional[Union[int, float, str, bool]]
+SUPPORTED_TYPES = [int, float, str, bool, dict, list, type(None)]
+SettingType = Optional[Union[int, float, str, bool, dict, list]]
 SETTING_FORMAT = '[A-Z][A-Z0-9_]*'
 
 
@@ -172,6 +173,8 @@ class Config(metaclass=ConfigMeta):
             option = _config_name_to_option(name)
             if setting.type == bool:
                 parser.add_argument(option, type=str, choices=['true', 'false'])
+            elif setting.type in (dict, list):
+                parser.add_argument(option, type=json.loads)
             else:
                 parser.add_argument(option, type=setting.type)
 
