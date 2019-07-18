@@ -135,14 +135,18 @@ class Config(metaclass=ConfigMeta):
         Args:
             group_name: The name of the group.
         """
-        if group_name not in cls.groups:
+        if group_name == 'default':
+            cls.reset_to_defaults()
+
+        elif group_name not in cls.groups:
             raise ValueError(f'Unknown group: {group_name}')
 
-        for name, setting in cls._settings.items():
-            if group_name in setting.group_values:
-                setattr(cls, name, setting.group_values[group_name])
-            else:
-                setattr(cls, name, setting.default)
+        else:
+            for name, setting in cls._settings.items():
+                if group_name in setting.group_values:
+                    setattr(cls, name, setting.group_values[group_name])
+                else:
+                    setattr(cls, name, setting.default)
 
     @classmethod
     def parse_args(
@@ -181,10 +185,7 @@ class Config(metaclass=ConfigMeta):
         args = parser.parse_args(argv)
 
         if cls.groups:
-            if args.configuration == 'default':
-                cls.reset_to_defaults()
-            else:
-                cls.set_group(args.configuration)
+            cls.set_group(args.configuration)
 
         for name, setting in cls._settings.items():
             arg_name = _config_name_to_arg_name(name)

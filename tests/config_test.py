@@ -105,7 +105,7 @@ def test_undefined_groups():
             MY_INT = setting(10, baz=20)
 
 
-class test_set_group:
+def test_set_group():
     class config(Config):
         groups = ['foo', 'bar']
 
@@ -134,6 +134,23 @@ class test_set_group:
     assert config.S4 == 0.5
     assert config.S5 == [1, 2, 3]
     assert config.S6 == {'d': 4, 'e': 5}
+
+
+def test_set_default_group():
+    class config(Config):
+        groups = ['a', 'b']
+        FOO = setting(10, a=20, b=30)
+
+    config.set_group('default')
+    assert config.FOO == 10
+
+
+def test_set_default_group_without_groups():
+    class config(Config):
+        FOO = 10
+
+    config.set_group('default')
+    assert config.FOO == 10
 
 
 def test_set_bad_group():
